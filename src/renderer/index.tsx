@@ -1,15 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { ipcRenderer, remote, app } from "electron";
 import App, { showBook } from "./App";
 
 updateMainMenu();
-const zipFilePath = ipcRenderer.sendSync("get-file-that-launched-me");
+const zipFilePath = window.electronApi.sendSync("get-file-that-launched-me");
 
-const title = "BloomPUB Viewer " + require("../../package.json").version;
+const title = window.electronApi.getTitle();
 
-remote.getCurrentWindow().setTitle(title);
+window.electronApi.setTitle(title);
 
 ReactDOM.render(
   <App initialFilePath={zipFilePath} />,
@@ -17,7 +16,6 @@ ReactDOM.render(
 );
 
 function updateMainMenu() {
-  const mainWindow = remote.getCurrentWindow();
   const macMenu = {
     label: `BloomPUB Viewer`,
     submenu: [
@@ -25,7 +23,7 @@ function updateMainMenu() {
         label: `Quit`,
         accelerator: "Command+Q",
         click() {
-          remote.app.quit();
+          window.electronApi.quit();
         },
       },
     ],
@@ -61,15 +59,10 @@ function updateMainMenu() {
   }
 
   template.push(fileMenu);
-
-  const menu = remote.Menu.buildFromTemplate(
-    template as Electron.MenuItemConstructorOptions[]
-  );
-
-  remote.Menu.setApplicationMenu(menu);
+  window.electronApi.setApplicationMenu(template);
 }
 export function showOpenFile() {
-  const options: Electron.OpenDialogOptions = {
+  const options /*:Electron.OpenDialogOptions*/ = {
     title: "Open BloomPUB File",
     properties: ["openFile"],
     filters: [
@@ -79,9 +72,9 @@ export function showOpenFile() {
       },
     ],
   };
-  remote.dialog.showOpenDialog(options).then((result) => {
-    if (!result.canceled && result.filePaths.length > 0) {
-      showBook(result.filePaths[0]);
+  window.electronApi.showOpenDialog(options, (filepath: string) => {
+    if (filepath) {
+      showBook(filepath);
     }
   });
 }

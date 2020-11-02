@@ -18,8 +18,11 @@ const TerserPlugin = require("terser-webpack-plugin");
 // ]
 
 let mainConfig = {
+  // using -eval- here can trigger security alarm (BL-8994)
+  devtool: "cheap-module-source-map",
   entry: {
     main: path.join(__dirname, "../src/main/index.ts"),
+    preload: path.join(__dirname, "../src/preload.ts"),
   },
   // externals,
   module: {

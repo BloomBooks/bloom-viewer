@@ -20,7 +20,8 @@ const isNotProd = process.env.NODE_ENV !== "production";
 const rendererPath = path.resolve("src/renderer");
 
 let rendererConfig = {
-  devtool: "#cheap-module-eval-source-map",
+  // using -eval- here can trigger security alarm (BL-8994)
+  devtool: "#cheap-module-source-map",
   entry: {
     renderer: path.join(__dirname, "../src/renderer/index.tsx"),
   },
@@ -132,16 +133,15 @@ let rendererConfig = {
         removeComments: true, // 移除注释
         collapseBooleanAttributes: true, // 省略只有 boolean 值的属性值 例如：readonly checked
       },
-      nodeModules: isNotProd
-        ? path.resolve(__dirname, "../node_modules")
-        : false,
+      nodeModules: false, // renderer cannot access node (BL-8994)
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
   ],
   output: {
     filename: "[name].js",
-    libraryTarget: "commonjs2",
+    // libraryTarget "var" instead of "commonjs2" because the latter requires node (BL-8994)
+    libraryTarget: "var", // "commonjs2",
     path: path.join(__dirname, "../dist/electron"),
   },
   resolve: {
@@ -151,7 +151,8 @@ let rendererConfig = {
     },
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".css", ".node"],
   },
-  target: "electron-renderer",
+  // target "web" instead of "electron-renderer" to ensure no node entanglement remains (BL-8994)
+  target: "web",
 };
 
 /**
@@ -169,7 +170,7 @@ if (isNotProd) {
  * Adjust rendererConfig for production settings
  */
 if (isProd) {
-  rendererConfig.devtool = "";
+  rendererConfig.devtool = "cheap-module-source-map";
   rendererConfig.optimization = {
     minimize: true,
     minimizer: [

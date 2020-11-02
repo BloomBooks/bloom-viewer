@@ -2,26 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src http://localhost:9080 ws://localhost:9080 https: 'self'; style-src 'self' 'unsafe-inline' https: ; script-src-elem 'self'; object-src 'none'; img-src 'self' http://localhost:9080 data:">
     <title>electron-react</title>
-    <% if (htmlWebpackPlugin.options.nodeModules) { %>
-    <!-- Add `node_modules/` to global paths so `require` works properly in development -->
-    <script>
-      require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
-    </script>
-    <% } %>
   </head>
   <body>
     <div id="root"></div>
-    <!-- Set `__static` path to static files in production -->
-    <% if (!require('process').browser) { %>
-    <script>
-      if (process.env.NODE_ENV !== "development")
-        window.__static = require("path")
-          .join(__dirname, "/static")
-          .replace(/\\/g, "\\\\");
-    </script>
-    <% } %>
-
     <!-- webpack builds are automatically injected -->
   </body>
 </html>
