@@ -18,45 +18,47 @@ const TerserPlugin = require('terser-webpack-plugin');
 // ]
 
 let mainConfig = {
+  devtool: "cheap-module-source-map",
   entry: {
-    main: path.join(__dirname, '../src/main/index.ts')
+    main: path.join(__dirname, "../src/main/index.ts"),
+    preload: path.join(__dirname, "../src/preload.ts"),
   },
   // externals,
   module: {
     rules: [
       {
         test: /\.(js|ts)$/,
-        loader: 'ts-loader',
+        loader: "ts-loader",
         options: {
           transpileOnly: true,
-          experimentalWatchApi: true
+          experimentalWatchApi: true,
         },
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.node$/,
-        use: 'node-loader'
-      }
-    ]
+        use: "node-loader",
+      },
+    ],
   },
   node: {
-    __dirname: process.env.NODE_ENV !== 'production',
-    __filename: process.env.NODE_ENV !== 'production'
+    __dirname: process.env.NODE_ENV !== "production",
+    __filename: process.env.NODE_ENV !== "production",
   },
   output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    path: path.join(__dirname, '../dist/electron')
+    filename: "[name].js",
+    libraryTarget: "commonjs2",
+    path: path.join(__dirname, "../dist/electron"),
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   resolve: {
-    modules: ['src', 'node_modules'],
-    extensions: ['.js', '.ts', '.json', '.node']
+    modules: ["src", "node_modules"],
+    extensions: [".js", ".ts", ".json", ".node"],
   },
-  target: 'electron-main'
+  target: "electron-main",
 };
 
 /**

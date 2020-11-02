@@ -1,12 +1,10 @@
-import { css, jsx } from "@emotion/core";
-/** @jsx jsx */
+import { css } from "@emotion/core";
 import React, { useEffect, useState } from "react";
 import { showOpenFile } from ".";
-import { shell } from "electron";
 import wordmark from "../../build/wordmark.svg";
 import logo from "../../build/icon.svg";
-import search from "../../build/search.svg";
-import open from "../../build/open.svg";
+import search from "../../build/Search.svg";
+import open from "../../build/Open.svg";
 
 export const StartScreen: React.FunctionComponent<{}> = (props) => {
   return (
@@ -53,7 +51,7 @@ export const StartScreen: React.FunctionComponent<{}> = (props) => {
           <br />
           <a
             onClick={() => {
-              shell.openExternal("https://bloomlibrary.org/browse");
+              window.electronApi.openLibrary();
             }}
           >
             <img src={search} css={css``} />

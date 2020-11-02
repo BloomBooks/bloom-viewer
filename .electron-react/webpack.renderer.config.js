@@ -20,9 +20,9 @@ const isNotProd = process.env.NODE_ENV !== "production";
 const rendererPath = path.resolve("src/renderer");
 
 let rendererConfig = {
-  devtool: "#cheap-module-eval-source-map",
+  devtool: "#cheap-module-source-map",
   entry: {
-    renderer: path.join(__dirname, "../src/renderer/index.tsx")
+    renderer: path.join(__dirname, "../src/renderer/index.tsx"),
   },
   // externals: [
   //   ...Object.keys(dependencies || {}).filter(
@@ -36,49 +36,49 @@ let rendererConfig = {
         use: [
           isProd ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
-          "sass-loader"
+          "sass-loader",
         ],
-        include: [rendererPath]
+        include: [rendererPath],
       },
       {
         test: /\.sass$/,
         use: [
           isProd ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
-          "sass-loader?indentedSyntax"
+          "sass-loader?indentedSyntax",
         ],
-        include: [rendererPath]
+        include: [rendererPath],
       },
       {
         test: /\.less$/,
         use: [
           isProd ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
-          "less-loader"
+          "less-loader",
         ],
-        include: [rendererPath]
+        include: [rendererPath],
       },
       {
         test: /\.css$/,
         use: [
           isProd ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader"
+          "css-loader",
         ],
-        include: [rendererPath]
+        include: [rendererPath],
       },
       {
         test: /\.(js|jsx|ts|tsx)$/,
         use: {
           loader: "babel-loader",
           options: {
-            cacheDirectory: true
-          }
+            cacheDirectory: true,
+          },
         },
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.node$/,
-        use: "node-loader"
+        use: "node-loader",
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -86,17 +86,17 @@ let rendererConfig = {
           loader: "url-loader",
           query: {
             limit: 10000,
-            name: "imgs/[name]--[folder].[ext]"
-          }
-        }
+            name: "imgs/[name]--[folder].[ext]",
+          },
+        },
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: "url-loader",
         options: {
           limit: 10000,
-          name: "media/[name]--[folder].[ext]"
-        }
+          name: "media/[name]--[folder].[ext]",
+        },
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -104,23 +104,23 @@ let rendererConfig = {
           loader: "url-loader",
           query: {
             limit: 10000,
-            name: "fonts/[name]--[folder].[ext]"
-          }
-        }
-      }
-    ]
+            name: "fonts/[name]--[folder].[ext]",
+          },
+        },
+      },
+    ],
   },
   node: {
     __dirname: isNotProd,
-    __filename: isNotProd
+    __filename: isNotProd,
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, "../node_modules/bloom-player/dist/")
+        from: path.resolve(__dirname, "../node_modules/bloom-player/dist/"),
         //,to: "findmeplease"
-      }
+      },
     ]),
     new HtmlWebpackPlugin({
       filename: "index.html",
@@ -130,28 +130,27 @@ let rendererConfig = {
         collapseWhitespace: true, // 折叠空白区域
         removeAttributeQuotes: true, // 移除属性的引号
         removeComments: true, // 移除注释
-        collapseBooleanAttributes: true // 省略只有 boolean 值的属性值 例如：readonly checked
+        collapseBooleanAttributes: true, // 省略只有 boolean 值的属性值 例如：readonly checked
       },
-      nodeModules: isNotProd
-        ? path.resolve(__dirname, "../node_modules")
-        : false
+      nodeModules: false,
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    // new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   output: {
     filename: "[name].js",
-    libraryTarget: "commonjs2",
-    path: path.join(__dirname, "../dist/electron")
+    libraryTarget: "var", // "commonjs2",
+    path: path.join(__dirname, "../dist/electron"),
   },
   resolve: {
     modules: ["src", "node_modules"],
     alias: {
-      "@": path.join(__dirname, "../src/renderer")
+      "@": path.join(__dirname, "../src/renderer"),
     },
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".css", ".node"]
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".css", ".node"],
   },
-  target: "electron-renderer"
+  // target "web" instead of "electron-renderer" to ensure no node entanglement remains
+  target: "web",
 };
 
 /**
@@ -169,7 +168,7 @@ if (isNotProd) {
  * Adjust rendererConfig for production settings
  */
 if (isProd) {
-  rendererConfig.devtool = "";
+  rendererConfig.devtool = "cheap-module-source-map";
   rendererConfig.optimization = {
     minimize: true,
     minimizer: [

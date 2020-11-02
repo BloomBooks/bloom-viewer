@@ -66,3 +66,20 @@ declare module '*.module.sass' {
   const classes: { readonly [key: string]: string }
   export default classes
 }
+
+// This interface is established in preload.ts.
+interface Window {
+  electronApi: {
+    sendSync: (channel: string, ...arg: any) => any;
+    send: (channel: string, ...arg: any) => void;
+    receive: (channel: string, func) => any;
+    openLibrary: () => void;
+    addRecentDocument: (zipPath: string) => void;
+    getTitle: () => string;
+    setTitle: (title: string) => string;
+    quit: () => void;
+    setApplicationMenu: (template: Array<any>) => void;
+    showOpenDialog: (options: any, func) => void;
+    checkForNewVersion: () => void;
+  };
+}
