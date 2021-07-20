@@ -74,6 +74,7 @@ interface Window {
     send: (channel: string, ...arg: any) => void;
     receive: (channel: string, func) => any;
     openLibrary: () => void;
+    openExternal: (externalLink: string) => void;
     addRecentDocument: (zipPath: string) => void;
     quit: () => void;
     setApplicationMenu: (template: Array<any>) => void;
