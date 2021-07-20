@@ -1,7 +1,4 @@
 import { contextBridge, ipcRenderer, remote, shell } from "electron";
-import { Octokit } from "@octokit/rest";
-import compareVersions from "compare-versions";
-import { toast } from "react-toastify";
 
 // Expose protected methods that allow the renderer process to use
 // ipcRenderer, remote, and shell without exposing the entire objects
@@ -28,7 +25,10 @@ contextBridge.exposeInMainWorld("electronApi", {
     }
   },
   openLibrary: () => {
-    shell.openExternal("https://bloomlibrary.org/browse");
+    shell.openExternal("https://bloomlibrary.org");
+  },
+  openExternal: (externalLink: string) => {
+    shell.openExternal(externalLink);
   },
 
   addRecentDocument: (zipPath: string) => {
@@ -54,33 +54,6 @@ contextBridge.exposeInMainWorld("electronApi", {
           func(result.filePaths[0]);
         } else {
           func("");
-        }
-      });
-  },
-
-  checkForNewVersion: () => {
-    const octokit = new Octokit();
-    octokit.repos
-      .getLatestRelease({ owner: "bloombooks", repo: "bloompub-viewer" })
-      .then((data) => {
-        //strip out the leading "v" in "v1.2.3";
-        const version = data.data.tag_name.replace(/v/gi, "");
-        if (compareVersions(version, require("../package.json").version) > 0) {
-          toast.success(
-            `Click to get new version of BloomPUB Viewer (${data.data.name})`,
-            {
-              position: "bottom-right",
-              autoClose: 15000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              onClick: () => {
-                shell.openExternal(data.data.html_url);
-              },
-            }
-          );
         }
       });
   },
